@@ -23,3 +23,5 @@ yarn-debug.log*
 yarn-error.log*
 
 /screen_refs
+firestore.js
+firestore.rules
