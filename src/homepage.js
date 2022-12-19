@@ -1,14 +1,18 @@
-import React, {useState} from 'react';
+import React, {useState, useContext} from 'react';
 import TopBar from './components/topbar';
 import {Link} from 'react-router-dom';
+import {UserContext} from './authcontext';
 
 function HomePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const user = useContext(UserContext);
+
   function handleSubmit(e) {
     e.preventDefault();
     console.log(email, password);
+    console.log(user);
   }
 
   return (
