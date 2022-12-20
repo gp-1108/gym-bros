@@ -1,16 +1,39 @@
-import React, {useState} from 'react';
-import TopBar from './components/topbar';
-import {Link} from 'react-router-dom';
+import React, {useState, useContext} from 'react';
+import {UserContext} from '../authcontext';
+import TopBar from '../components/topbar';
+import {Navigate, Link} from 'react-router-dom';
+import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
 
 function SignUp() {
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(email, password, confirmPsw);
+    const reEmail = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
+    if (!reEmail.test(email)) {
+      alert('Please enter a valid email address');
+      return;
+    }
+    if (password !== confirmPsw) {
+      alert('Passwords do not match');
+      return;
+    }
+
+    const auth = getAuth();
+    try {
+      await createUserWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      alert('Error creating account: ' + err.message);
+    }
   }
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPsw, setConfirm] = useState('');
+  const {userLoaded, user} = useContext(UserContext);
+
+  if (userLoaded && user) {
+    return <Navigate to='/bookings' redirect />;
+  }
+
 
   return (
     <div className="min-h-screen bg-black">

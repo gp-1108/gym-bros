@@ -1,19 +1,32 @@
 import React, {useState, useContext} from 'react';
-import TopBar from './components/topbar';
-import {Link} from 'react-router-dom';
-import {UserContext} from './authcontext';
+import TopBar from '../components/topbar';
+import {Navigate, Link} from 'react-router-dom';
+import {auth} from '../firebase.js';
+import {signInWithEmailAndPassword} from 'firebase/auth';
+import {UserContext} from '../authcontext.js';
 
 function HomePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const {userLoaded, user} = useContext(UserContext);
 
-  const user = useContext(UserContext);
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    console.log(email, password);
-    console.log(user);
+    const reEmail = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
+    if (!reEmail.test(email)) {
+      alert('Please enter a valid email address');
+    }
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (err) {
+      alert('Error logging in: ' + err.message);
+    }
   }
+
+  if (userLoaded && user) {
+    return <Navigate to='/bookings' redirect />;
+  }
+
 
   return (
     <div className="min-h-screen bg-black">
