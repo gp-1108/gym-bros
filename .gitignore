@@ -25,3 +25,5 @@ yarn-error.log*
 /screen_refs
 /src/firebase.js
 firestore.rules
+ui-debug.log
+firestore-debug.log
