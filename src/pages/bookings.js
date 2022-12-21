@@ -14,9 +14,6 @@ function Bookings() {
   const {userLoaded, user} = useContext(UserContext);
   const [state, setState] = useState(['X', 'X', 'X', 'X', 'X', 'X', 'X']);
 
-  if (!userLoaded || !user) {
-    return <Navigate to='/' redirect />;
-  }
 
   async function logout() {
     await signOut(auth);
@@ -31,8 +28,13 @@ function Bookings() {
   }
 
   useEffect(() => {
-    console.log(state);
+    const c = 'c';
+    c.toUpperCase();
   }, [state]);
+
+  if (!userLoaded || !user) {
+    return <Navigate to='/' redirect />;
+  }
 
 
   return (
