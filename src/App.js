@@ -5,6 +5,7 @@ import SignUp from './pages/signup.js';
 import Bookings from './pages/bookings.js';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AuthContext from './authcontext';
+import Settings from './pages/settings.js';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path='/' element={<Homepage />} />
           <Route path='/signup' element={<SignUp />} />
           <Route path='/bookings' element={<Bookings />} />
+          <Route path='/settings' element={<Settings />} />
         </Routes>
       </BrowserRouter>
     </AuthContext>
