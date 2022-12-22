@@ -1,11 +1,15 @@
 const admin = require('firebase-admin');
+const serviceAccount = require('./serviceAccountKey.json');
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
 const functions = require('firebase-functions');
 const {connectFunctionsEmulator} = require('firebase/functions');
 connectFunctionsEmulator(functions, 'localhost', 5001);
 
-const {connectFirestoreEmulator} = require('firebase/firestore');
-const db = admin.initializeApp().firestore();
-connectFirestoreEmulator(db, 'localhost', 8080);
+const {getFirestore} = require('firebase-admin/firestore');
+const db = getFirestore();
 
 module.exports = {
   admin,
