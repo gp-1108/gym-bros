@@ -24,7 +24,7 @@ function HomePage() {
   }
 
   if (userLoaded && user) {
-    return <Navigate to='/bookings' redirect />;
+    return <Navigate to='/settings' redirect />;
   }
 
 
