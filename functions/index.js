@@ -1,7 +1,7 @@
 const {functions, db} = require('./firebase.js');
-// const {collection, addDoc} = require('firebase-admin/firestore');
+const booker = require('./bookerMain.js');
 
-exports.consoleLog = functions.auth.user().onCreate((user) => {
+exports.initUser = functions.auth.user().onCreate((user) => {
   async function initUser(uid) {
     const timetableRef = db.collection('timetables');
     try {
@@ -13,7 +13,6 @@ exports.consoleLog = functions.auth.user().onCreate((user) => {
     } catch (error) {
       functions.logger.error('Error adding user to database', error);
     }
-    
     const credentialRef = db.collection('credentials');
     try {
       await credentialRef.add({
@@ -27,4 +26,18 @@ exports.consoleLog = functions.auth.user().onCreate((user) => {
   }
 
   return initUser(user.uid);
+});
+
+// eslint-disable-next-line max-len
+exports.cyclicBooking = functions.runWith({memory: '1GB', timeoutSeconds: 540}).https.onRequest(async (req, res) => {
+  try {
+    const credentials = await db.collection('credentials').get();
+    for (let cred of credentials.docs) {
+      cred = cred.data().credentials;
+      await booker(cred[0], cred[1], '2022-12-23', '13:30');
+    }
+  } catch (err) {
+    functions.logger.warn('Error getting timetables', err);
+  }
+  res.json({status: 'ok'});
 });
