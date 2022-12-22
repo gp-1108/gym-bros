@@ -40,22 +40,33 @@ function Bookings() {
     const q = query(collection(db, 'timetables'), where('user', '==', user.uid));
     const table = (await getDocs(q)).docs[0];
     await updateDoc(table.ref, {table: state});
+    alert('done');
   }
 
   useEffect(() => {
     async function fetchData() {
       if (!userLoaded || !user) {
-        return;
+        return 0;
       }
       const q = query(collection(db, 'timetables'), where('user', '==', user.uid));
       try {
-        const table = (await getDocs(q)).docs[0].data().table;
+        let table = (await getDocs(q)).docs;
+        if (table.length == 0) {
+          return 1;
+        }
+        table = table[0].data().table;
         setState(table);
+        return 0;
       } catch (error) {
         alert('Error: ' + error);
+        return -1;
       }
     }
-    fetchData();
+
+    // In case the gcloud function has not already done its job
+    if (fetchData() == 1) {
+      setTimeout(fetchData, 1500);
+    }
   }, []);
 
 
