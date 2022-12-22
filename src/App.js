@@ -6,6 +6,7 @@ import Bookings from './pages/bookings.js';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import AuthContext from './authcontext';
 import Settings from './pages/settings.js';
+import Info from './pages/info.js';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           <Route path='/bookings' element={<Bookings />} />
           <Route path='/settings' element={<Settings />} />
+          <Route path='/info' element={<Info />} />
         </Routes>
       </BrowserRouter>
     </AuthContext>
