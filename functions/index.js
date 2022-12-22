@@ -1,22 +1,14 @@
 const {functions, db} = require('./firebase.js');
-const {doc, addDoc} = require('firebase/firestore');
+// const {collection, addDoc} = require('firebase-admin/firestore');
 
 exports.consoleLog = functions.auth.user().onCreate((user) => {
-  functions.logger.info(user);
   const uid = user.uid;
-  addDoc(doc(db, 'timetables', 'timetables'), {
+  const collectionRef = db.collection('timetables');
+  collectionRef.add({
     user: uid,
     table: ['X', 'X', 'X', 'X', 'X', 'X', 'X'],
   }).then(
-      () => functions.logger.info('Document successfully written!')
-  ).catch((err) => functions.logger.error(err));
+      (docRef) => functions.logger.info('Document written with ID: ', docRef.id)
+  ).catch((err) => functions.logger.error('Error adding document: ', err));
   return;
 });
-
-// // Create and deploy your first functions
-// // https://firebase.google.com/docs/functions/get-started
-//
-// exports.helloWorld = functions.https.onRequest((request, response) => {
-//   functions.logger.info('Hello logs!', {structuredData: true});
-//   response.send('Hello from Firebase!');
-// });
