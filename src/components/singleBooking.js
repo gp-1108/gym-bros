@@ -53,8 +53,8 @@ function SingleBooking({dayIndex, time, updateValue}) {
         </div>
         <div className='col-start-4 col-end-6 flex justify-end'>
           <select className='bg-white rounded m-0 p-2 border-2 border-black'
-            onChange={(e) => updateValue(dayIndex, e.target.value)} defaultValue={time}>
-            <option value='X'>X</option>
+            onChange={(e) => updateValue(dayIndex, e.target.value)} value={time}>
+            <option key='8'>X</option>
             {timetable.map((singleTime, index) => <option key={index}>{singleTime}</option>)}
           </select>
         </div>
