@@ -29,18 +29,6 @@ exports.initUser = functions.region('europe-west1').auth.user().onCreate((user) 
   return initUser(user.uid);
 });
 
-// eslint-disable-next-line max-len
-// exports.cyclicBookingPubSub = functions
-//     .runWith({memory: '512MB', timeoutSeconds: 540})
-//     .region('europe-west1')
-//     .pubsub.schedule('5 12 * * *')
-//     .timeZone('Europe/Rome')
-//     .onRun(async (context) => {
-//           code
-//           code
-//           code
-//       return null;
-//     });
 
 async function formatData() {
   const credentials = (await db.collection('credentials').get())
@@ -64,6 +52,48 @@ async function formatData() {
   return map;
 }
 
+exports.cyclicBookingPubSub = functions
+    .runWith({memory: '512MB', timeoutSeconds: 540})
+    .region('europe-west1')
+    .pubsub.schedule('5 12 * * *')
+    .timeZone('Europe/Rome')
+    .onRun(async (context) => {
+      try {
+        const map = await formatData();
+        const daysMap = {
+          'Monday': 0,
+          'Tuesday': 1,
+          'Wednesday': 2,
+          'Thursday': 3,
+          'Friday': 4,
+          'Saturday': 5,
+          'Sunday': 6,
+        };
+        const dayAfterTomorrow = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000); // 2 days from now
+        const stringDate = dayAfterTomorrow.toISOString().split('T')[0]; // YYYY-MM-DD
+        // Monday, Tuesday, etc.
+        const dayIndex = daysMap[dayAfterTomorrow.toLocaleDateString('en-US', {weekday: 'long'})];
+        for (const key in map) {
+          const {creds, table} = map[key];
+          const [username, password] = creds;
+          if (table[dayIndex] != 'X') {
+            console.log('Booking for', username, 'on', stringDate, 'at', table[dayIndex]);
+            try {
+              await booker(username, password, stringDate, table[dayIndex]);
+            } catch (err) {
+              functions.logger.warn('Error in booking for user ', username, ' with message: ', err);
+            }
+          }
+        }
+      } catch (err) {
+        functions.logger.warn('Error retrieving all tables and credentials', err);
+      }
+      return null;
+    });
+
+/*
+  * This function is used to test the cyclic booking function
+  * Comment out for testing
 exports.cyclicBookingTest = functions
     .region('europe-west1')
     .runWith({memory: '512MB', timeoutSeconds: 540})
@@ -100,3 +130,4 @@ exports.cyclicBookingTest = functions
       }
       res.json({status: 'ok'});
     });
+*/
