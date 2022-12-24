@@ -4,7 +4,9 @@ const bookFunction = require('./booking.js');
 
 
 module.exports = async function booker(usn, psw, date, time) {
-  const browser = await puppeteer.launch({headless: true});
+  const browser = await puppeteer.launch(
+      {headless: true, args: ['--no-sandbox']},
+  );
   const page = await browser.newPage();
   // load main page
   await page.goto('https://gyms.vertical-life.info/intellighenzia-project-asd/checkins');
