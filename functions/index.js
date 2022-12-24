@@ -1,7 +1,8 @@
 const {functions, db} = require('./firebase.js');
 const booker = require('./bookerMain.js');
 
-exports.initUser = functions.auth.user().onCreate((user) => {
+// eslint-disable-next-line max-len
+exports.initUser = functions.region('europe-west1').auth.user().onCreate((user) => {
   async function initUser(uid) {
     const timetableRef = db.collection('timetables');
     try {
@@ -29,15 +30,73 @@ exports.initUser = functions.auth.user().onCreate((user) => {
 });
 
 // eslint-disable-next-line max-len
-exports.cyclicBooking = functions.runWith({memory: '1GB', timeoutSeconds: 540}).https.onRequest(async (req, res) => {
-  try {
-    const credentials = await db.collection('credentials').get();
-    for (let cred of credentials.docs) {
-      cred = cred.data().credentials;
-      await booker(cred[0], cred[1], '2022-12-23', '13:30');
+// exports.cyclicBookingPubSub = functions
+//     .runWith({memory: '512MB', timeoutSeconds: 540})
+//     .region('europe-west1')
+//     .pubsub.schedule('5 12 * * *')
+//     .timeZone('Europe/Rome')
+//     .onRun(async (context) => {
+//           code
+//           code
+//           code
+//       return null;
+//     });
+
+async function formatData() {
+  const credentials = (await db.collection('credentials').get())
+      .docs.map((doc) => doc.data());
+  const timetables = (await db.collection('timetables').get())
+      .docs.map((doc) => doc.data());
+  const map = {};
+  // console.log(credentials, timetables);
+  for (const credential of credentials) {
+    if (!credential.credentials[0] || !credential.credentials[1]) {
+      continue;
     }
-  } catch (err) {
-    functions.logger.warn('Error getting timetables', err);
+    map[credential.user] = {};
+    map[credential.user]['creds'] = credential.credentials;
   }
-  res.json({status: 'ok'});
-});
+  for (const timetable of timetables) {
+    if (map[timetable.user]) {
+      map[timetable.user]['table'] = timetable.table;
+    }
+  }
+  return map;
+}
+
+exports.cyclicBookingTest = functions
+    .region('europe-west1')
+    .runWith({memory: '512MB', timeoutSeconds: 540})
+    .https.onRequest(async (req, res) => {
+      // await booker(username, password, '2022-12-23', '13:30');
+      try {
+        const map = await formatData();
+        const daysMap = {
+          'Monday': 0,
+          'Tuesday': 1,
+          'Wednesday': 2,
+          'Thursday': 3,
+          'Friday': 4,
+          'Saturday': 5,
+          'Sunday': 6,
+        };
+        const dayAfterTomorrow = new Date(new Date().getTime() + 2 * 24 * 60 * 60 * 1000);
+        const stringDate = dayAfterTomorrow.toISOString().split('T')[0];
+        const dayIndex = daysMap[dayAfterTomorrow.toLocaleDateString('en-US', {weekday: 'long'})];
+        for (const key in map) {
+          const {creds, table} = map[key];
+          const [username, password] = creds;
+          if (table[dayIndex] != 'X') {
+            console.log('Booking for', username, 'on', stringDate, 'at', table[dayIndex]);
+            try {
+              await booker(username, password, stringDate, table[dayIndex]);
+            } catch (err) {
+              functions.logger.warn('Error in booking for user ', username, ' with message: ', err);
+            }
+          }
+        }
+      } catch (err) {
+        functions.logger.warn('Error retrieving all tables and credentials', err);
+      }
+      res.json({status: 'ok'});
+    });
