@@ -99,6 +99,7 @@ exports.cyclicBookingTest = functions
     .runWith({memory: '512MB', timeoutSeconds: 540})
     .https.onRequest(async (req, res) => {
       // await booker(username, password, '2022-12-23', '13:30');
+      functions.logger.info('Cyclic booking test started');
       try {
         const map = await formatData();
         const daysMap = {
@@ -117,7 +118,7 @@ exports.cyclicBookingTest = functions
           const {creds, table} = map[key];
           const [username, password] = creds;
           if (table[dayIndex] != 'X') {
-            console.log('Booking for', username, 'on', stringDate, 'at', table[dayIndex]);
+            functions.logger.info('Booking for', username, 'on', stringDate, 'at', table[dayIndex]);
             try {
               await booker(username, password, stringDate, table[dayIndex]);
             } catch (err) {

@@ -5,8 +5,8 @@ admin.initializeApp({
 });
 
 const functions = require('firebase-functions');
-const {connectFunctionsEmulator} = require('firebase/functions');
-connectFunctionsEmulator(functions, 'localhost', 5001);
+// const {connectFunctionsEmulator} = require('firebase/functions');
+// connectFunctionsEmulator(functions, 'localhost', 5001);
 
 const {getFirestore} = require('firebase-admin/firestore');
 const db = getFirestore();
