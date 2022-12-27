@@ -6,12 +6,12 @@ Each improvement is listed in its own area:
 * Firebase functions -> regarding firebase functions
 
 ## FIRESTORE
-- add admin page to remove accounts
+* add admin page to remove accounts
 
 ## FRONTEND
-- completely revisit error management in all pages
-- add my own alert popup (stop using alerts)
+* completely revisit error management in all pages
+* add my own alert popup (stop using alerts)
 
 ## FIREBASE FUNCTIONS
-- Add error management for all different scenarios in the bookking app
-- Do not close the chromium driver each and every booking
+* Add error management for all different scenarios in the bookking app
+* Do not close the chromium driver each and every booking
