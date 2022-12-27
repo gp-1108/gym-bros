@@ -3,17 +3,41 @@ import {UserContext} from '../authcontext';
 import TopBar from '../components/topbar';
 import {Navigate, Link} from 'react-router-dom';
 import {getAuth, createUserWithEmailAndPassword} from 'firebase/auth';
+import Modal from '../components/modal.js';
 
 function SignUp() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPsw, setConfirm] = useState('');
+  const {userLoaded, user} = useContext(UserContext);
+
+  const [modalState, setModalState] = useState({
+    showModal: false,
+    text: '',
+  });
+
+  function resetModal() {
+    setModalState({
+      showModal: false,
+      text: '',
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     const reEmail = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
     if (!reEmail.test(email)) {
-      alert('Please enter a valid email address');
+      setModalState({
+        showModal: true,
+        text: 'Please enter a valid email address.',
+      });
       return;
     }
     if (password !== confirmPsw) {
-      alert('Passwords do not match');
+      setModalState({
+        showModal: true,
+        text: 'Passwords do not match.',
+      });
       return;
     }
 
@@ -21,14 +45,12 @@ function SignUp() {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      alert('Error creating account: ' + err.message);
+      setModalState({
+        showModal: true,
+        text: err.message,
+      });
     }
   }
-
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPsw, setConfirm] = useState('');
-  const {userLoaded, user} = useContext(UserContext);
 
   if (userLoaded && user) {
     return <Navigate to='/bookings' redirect />;
@@ -37,6 +59,7 @@ function SignUp() {
 
   return (
     <div className="min-h-screen bg-black">
+      <Modal show={modalState.showModal} text={modalState.text} onClose={resetModal} />
       <Link to='/'>
         <TopBar title="BOT" />
       </Link>
