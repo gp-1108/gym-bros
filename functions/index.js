@@ -55,7 +55,7 @@ async function formatData() {
 exports.cyclicBookingPubSub = functions
     .runWith({memory: '512MB', timeoutSeconds: 540})
     .region('europe-west1')
-    .pubsub.schedule('5 12 * * *')
+    .pubsub.schedule('15 12 * * *')
     .timeZone('Europe/Rome')
     .onRun(async (context) => {
       try {
