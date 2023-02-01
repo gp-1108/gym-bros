@@ -4,22 +4,42 @@ import {Navigate, Link} from 'react-router-dom';
 import {auth} from '../firebase.js';
 import {signInWithEmailAndPassword} from 'firebase/auth';
 import {UserContext} from '../authcontext.js';
+import Modal from '../components/modal';
 
 function HomePage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const {userLoaded, user} = useContext(UserContext);
 
+  const [modalState, setModalState] = useState({
+    showModal: false,
+    text: '',
+  });
+
+  function resetModal() {
+    setModalState({
+      showModal: false,
+      text: '',
+    });
+  }
+
   async function handleSubmit(e) {
     e.preventDefault();
     const reEmail = /^[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*@[a-zA-Z0-9]+(?:\.[a-zA-Z0-9]+)*$/;
     if (!reEmail.test(email)) {
-      alert('Please enter a valid email address');
+      setModalState({
+        showModal: true,
+        text: 'Please enter a valid email address.',
+      });
+      return;
     }
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (err) {
-      alert('Error logging in: ' + err.message);
+      setModalState({
+        showModal: true,
+        text: err.message,
+      });
     }
   }
 
@@ -30,6 +50,7 @@ function HomePage() {
 
   return (
     <div className="min-h-screen bg-black">
+      <Modal show={modalState.showModal} text={modalState.text} onClose={resetModal} />
       <TopBar title="BOT" />
       <div className="
       container mx-auto pt-20">

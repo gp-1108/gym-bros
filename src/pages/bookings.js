@@ -16,11 +16,23 @@ import {
   getDocs,
   updateDoc,
 } from 'firebase/firestore';
+import Modal from '../components/modal.js';
 
 
 function Bookings() {
   const {userLoaded, user} = useContext(UserContext);
   const [state, setState] = useState(['X', 'X', 'X', 'X', 'X', 'X', 'X']);
+  const [modalState, setModalState] = useState({
+    showModal: false,
+    text: '',
+  });
+
+  function resetModal() {
+    setModalState({
+      showModal: false,
+      text: '',
+    });
+  }
 
 
   async function logout() {
@@ -40,7 +52,10 @@ function Bookings() {
     const q = query(collection(db, 'timetables'), where('user', '==', user.uid));
     const table = (await getDocs(q)).docs[0];
     await updateDoc(table.ref, {table: state});
-    alert('done');
+    setModalState({
+      showModal: true,
+      text: 'Changes saved!',
+    });
   }
 
   useEffect(() => {
@@ -58,7 +73,10 @@ function Bookings() {
         setState(table);
         return 0;
       } catch (error) {
-        alert('Error: ' + error);
+        setModalState({
+          showModal: true,
+          text: 'Error: ' + error.message,
+        });
         return -1;
       }
     }
@@ -77,6 +95,7 @@ function Bookings() {
 
   return (
     <div className='min-h-screen bg-black'>
+      <Modal show={modalState.showModal} onClose={resetModal} text={modalState.text} />
       <TopBar title='BOOKINGS' />
       <div className='flex justify-around min-h-min mt-3 mb-8'>
         <Link to='/settings'><img src={SettingsIcon} width={70}/></Link>

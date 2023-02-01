@@ -12,11 +12,24 @@ import {
 } from 'firebase/firestore';
 import BookingIcon from '../icons/book.svg';
 import InfoIcon from '../icons/info.svg';
+import Modal from '../components/modal.js';
 
 function Settings() {
   const {userLoaded, user} = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [modalState, setModalState] = useState({
+    showModal: false,
+    text: '',
+  });
+
+  function resetModal() {
+    setModalState({
+      showModal: false,
+      text: '',
+    });
+  }
 
   if (!userLoaded || !user) {
     return <Navigate to='/' />;
@@ -25,7 +38,10 @@ function Settings() {
   async function handleSubmit(e) {
     e.preventDefault();
     if (email == '' || password == '') {
-      alert('Please fill in all fields');
+      setModalState({
+        showModal: true,
+        text: 'Please fill in all fields',
+      });
       return;
     }
     async function setData() {
@@ -38,10 +54,16 @@ function Settings() {
         }
         await updateDoc(cred[0].ref, {credentials: [email, password]});
         e.target.reset();
-        alert('done');
+        setModalState({
+          showModal: true,
+          text: 'Credentials saved!',
+        });
         return 0;
       } catch (err) {
-        alert('error: ' + err);
+        setModalState({
+          showModal: true,
+          text: 'Error: ' + err.message,
+        });
         return -1;
       }
     }
@@ -54,6 +76,7 @@ function Settings() {
 
   return (
     <div className='min-h-screen bg-black'>
+      <Modal show={modalState.showModal} onClose={resetModal} text={modalState.text} />
       <TopBar title='SETTINGS' />
       <div className='flex justify-around min-h-min mt-3 mb-8'>
         <Link to='/bookings'><img src={BookingIcon} width={120}/></Link>
