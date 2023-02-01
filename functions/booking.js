@@ -17,7 +17,12 @@ module.exports = async function book(page, time) {
   const btn = (await slots[i].$x(".//button"))[0];
   await btn.click();
   await new Promise((resolve) => setTimeout(resolve, 2000));
-  const firstCheckbox = (await page.$x("//div[@class='custom-control custom-checkbox']"))[0];
+  let firstCheckbox = null;
+  try {
+    firstCheckbox = (await page.$x("//div[@class='custom-control custom-checkbox']"))[0];
+  } catch (err) {
+    throw new Error("No profile already created");
+  }
   const proceedBtn = (await page.$x("//button[text()='Continua']"))[0];
   await firstCheckbox.click();
   await proceedBtn.click();
