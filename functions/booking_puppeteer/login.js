@@ -14,7 +14,7 @@ module.exports = async function loginFunction(page, usn, psw) {
   let loggedIn = true;
   try {
     console.log("waiting for div");
-    await page.waitForSelector('div.alert-error', {timeout: 1000});
+    await page.waitForSelector('div.alert-error', {timeout: 1500});
     console.log("finished waiting for div");
     loggedIn = false;
   } catch (err) {
