@@ -11,13 +11,13 @@ Each improvement is listed in its own area:
 
 ## FRONTEND
 * ![warning](./emoji/warning_emoji.png) Completely revisit error management in all pages
-* ![warning](./emoji/warning_emoji.png) Add my own alert popup (stop using alerts) (Added but only in DEV)
+* (ADDED) ![warning](./emoji/warning_emoji.png) Add my own alert popup (stop using alerts)
 
 ## FIREBASE FUNCTIONS
 * ![alarm](./emoji/alarm_emoji.png) Add email alerts for errors (both to admin and user)
-* ![warning](./emoji/warning_emoji.png) Add error management for all different scenarios in the booking app
+* (ADDED) ![warning](./emoji/warning_emoji.png) Add error management for all different scenarios in the booking app
 * ![ice](./emoji/ice_emoji.png) Do not close the chromium driver each and every booking
-* ![ice](./emoji/ice_emoji.png) Decrease memory usage for booking func, the functions uses at max ~500MB
+* (ADDED) ![ice](./emoji/ice_emoji.png) Decrease memory usage for booking func, the functions uses at max ~500MB
 
 ## GENERAL
 * ![alarm](./emoji/alarm_emoji.png) Add a "Forgot password" page and functionality
