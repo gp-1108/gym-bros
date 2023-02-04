@@ -1,5 +1,6 @@
 const {functions, db} = require('./firebase.js');
-const booker = require('./bookerMain.js');
+const booker = require('./booking_puppeteer/bookerMain.js');
+const {sendEmail} = require('./emailsFunctions.js');
 
 // eslint-disable-next-line max-len
 exports.initUser = functions.region('europe-west1').auth.user().onCreate((user) => {
@@ -81,7 +82,9 @@ exports.cyclicBookingPubSub = functions
             try {
               await booker(username, password, stringDate, table[dayIndex]);
             } catch (err) {
-              functions.logger.warn('Error in booking for user ', username, ' with message: ', err);
+              sendEmail(username, stringDate, table[dayIndex], err.message);
+              functions.logger.warn(`Error booking for ${username} on ${stringDate} 
+                at ${table[dayIndex]}, with message ${err.message}}`);
             }
           }
         }
