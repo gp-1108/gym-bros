@@ -16,7 +16,10 @@ module.exports = async function booker(usn, psw, date, time) {
 
   // go to booking page
   await page.goto(`https://gyms.vertical-life.info/it/intellighenzia-project-asd/checkins#/service/default/74/${date}`);
-  await new Promise((resolve) => setTimeout(resolve, 2000));
+  await page.reload({waitUntil: ['networkidle0', 'domcontentloaded']});
+  if (!((page.url()).includes(date))) {
+    throw new Error('The date is not available.');
+  }
 
   // book a slot
   await bookFunction(page, time);
