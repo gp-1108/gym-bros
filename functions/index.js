@@ -95,8 +95,6 @@ exports.cyclicBookingPubSub = functions
     });
 
 /*
-  * This function is used to test the cyclic booking function
-  * Comment out for testing
 exports.cyclicBookingTest = functions
     .region('europe-west1')
     .runWith({memory: '512MB', timeoutSeconds: 540})
@@ -118,6 +116,7 @@ exports.cyclicBookingTest = functions
         const stringDate = dayAfterTomorrow.toISOString().split('T')[0];
         const dayIndex = daysMap[dayAfterTomorrow.toLocaleDateString('en-US', {weekday: 'long'})];
         for (const key in map) {
+          functions.logger.info('Booking for', key, 'on', stringDate, 'at', map[key].table[dayIndex]);
           const {creds, table} = map[key];
           const [username, password] = creds;
           if (table[dayIndex] != 'X') {

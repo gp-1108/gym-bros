@@ -14,7 +14,7 @@ Each improvement is listed in its own area:
 * (ADDED) ![warning](./emoji/warning_emoji.png) Add my own alert popup (stop using alerts)
 
 ## FIREBASE FUNCTIONS
-* ![alarm](./emoji/alarm_emoji.png) Add email alerts for errors (both to admin and user)
+* (ADDED) ![alarm](./emoji/alarm_emoji.png) Add email alerts for errors (both to admin and user)
 * (ADDED) ![warning](./emoji/warning_emoji.png) Add error management for all different scenarios in the booking app
 * ![ice](./emoji/ice_emoji.png) Do not close the chromium driver each and every booking
 * (ADDED) ![ice](./emoji/ice_emoji.png) Decrease memory usage for booking func, the functions uses at max ~500MB
