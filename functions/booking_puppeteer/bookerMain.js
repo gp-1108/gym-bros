@@ -1,6 +1,7 @@
 const puppeteer = require('puppeteer');
 const loginFunction = require('./login.js');
 const bookFunction = require('./booking.js');
+const selectDate = require('./selectDate.js');
 
 
 module.exports = async function booker(usn, psw, date, time) {
@@ -8,18 +9,16 @@ module.exports = async function booker(usn, psw, date, time) {
       {headless: true, args: ['--no-sandbox']},
   );
   const page = await browser.newPage();
+
   // load main page
   await page.goto('https://gyms.vertical-life.info/intellighenzia-project-asd/checkins');
   await page.waitForNavigation({waitUntil: 'networkidle0'});
+
   // login
   await loginFunction(page, usn, psw);
 
-  // go to booking page
-  await page.goto(`https://gyms.vertical-life.info/it/intellighenzia-project-asd/checkins#/service/default/74/${date}`);
-  await page.reload({waitUntil: ['networkidle0', 'domcontentloaded']});
-  if (!((page.url()).includes(date))) {
-    throw new Error('The date is not available.');
-  }
+  // select date
+  await selectDate(page, date);
 
   // book a slot
   await bookFunction(page, time);

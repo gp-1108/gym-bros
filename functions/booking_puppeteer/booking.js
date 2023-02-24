@@ -1,7 +1,8 @@
+const {functions} = require('../firebase.js');
 /* eslint-disable quotes */
 /* eslint-disable max-len */
 module.exports = async function book(page, time) {
-  const slots = (await page.$x("//div[@class='row align-items-center']/div[@class='col-6']/div[@class='h3 mb-1']/parent::div/parent::div"));
+  const slots = (await page.$x("//div[@class='row align-items-center']/div[contains(@class, 'col-6')]/div[@class='h3 mb-1']/parent::div/parent::div"));
   let i = 0;
   // searching for correct div slot
   for (; i < slots.length; i++) {
@@ -29,6 +30,7 @@ module.exports = async function book(page, time) {
   const confirmBtn = (await page.$x("//button[contains(text(),'Prenota')]"))[0];
   await confirmBtn.click();
   await new Promise((resolve) => setTimeout(resolve, 1000));
+  functions.logger.log('finished booking');
   console.log('finished booking');
   // console.log(confirmBtn);
 };
